@@ -160,6 +160,23 @@ namespace PhanMemThiTracNghiem
             }
         }
 
+        private void tabCauHoi_HienThiDropDownListMonHoc()
+        {
+            string sql = "SELECT * FROM MON_HOC;";
+            DataTable dt = ketNoi.SelectDuLieu(sql);
+            if (dt != null)
+            {
+                cbMonHocTabCH.Items.Clear();
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    DataRow dtRow = dt.Rows[i];
+                    string item = dtRow["TenMH"].ToString();
+                    cbMonHocTabCH.Items.Add(item);
+                }
+                cbMonHocTabCH.SelectedIndex = 0;
+            }
+        }
+
         private void tabHocSinh_HienThiHocSinh()
         {
             string maLop = GenerateSlug(cbLopHoc.Text);
@@ -358,6 +375,57 @@ namespace PhanMemThiTracNghiem
             this.tabMonHoc_HienThiMonHoc();
         }
 
+        private void tabCauHoi_Click()
+        {
+            this.Text = "Quản lý câu hỏi | Hệ thống thi trắc nghiệm";
+            this.tabCauHoi_HienThiDropDownListMonHoc();
+
+            // Tạo một GroupBox chứa câu hỏi
+            GroupBox groupBoxQuestion = new GroupBox();
+            groupBoxQuestion.Text = "Câu hỏi 1";
+            groupBoxQuestion.AutoSize = true;
+
+            // Tạo một Label trong GroupBox để hiển thị câu hỏi
+            Label lblQuestion = new Label();
+            lblQuestion.Text = "Đây là câu hỏi trắc nghiệm? Đây là câu hỏi trắc nghiệm? Đây là câu hỏi trắc nghiệm?Đây là câu hỏi trắc nghiệm?Đây là câu hỏi trắc nghiệm? Đây là câu hỏi trắc nghiệm?Đây là câu hỏi trắc nghiệm? Đây là câu hỏi trắc nghiệm? Đây là câu hỏi trắc nghiệm? Đây là câu hỏi trắc nghiệm?Đây là câu hỏi trắc nghiệm?Đây là câu hỏi trắc nghiệm?";
+            lblQuestion.AutoSize = true;
+            lblQuestion.Location = new Point(10, 20);
+            groupBoxQuestion.Controls.Add(lblQuestion);
+
+            // Tạo một Panel để chứa các phương án trả lời
+            Panel panelOptions = new Panel();
+            panelOptions.Location = new Point(20, lblQuestion.Location.Y + lblQuestion.Height + 25);
+            panelOptions.AutoSize = true;
+
+            // Tạo các RadioButton để hiển thị các phương án trả lời trong Panel
+            RadioButton radioButtonOption1 = new RadioButton();
+            radioButtonOption1.Text = "Phương án A";
+            radioButtonOption1.AutoSize = true;
+            panelOptions.Controls.Add(radioButtonOption1);
+
+            RadioButton radioButtonOption2 = new RadioButton();
+            radioButtonOption2.Text = "Phương án B";
+            radioButtonOption2.AutoSize = true;
+            radioButtonOption2.Location = new Point(0, radioButtonOption1.Location.Y + radioButtonOption1.Height + 15);
+            panelOptions.Controls.Add(radioButtonOption2);
+
+            RadioButton radioButtonOption3 = new RadioButton();
+            radioButtonOption3.Text = "Phương án C";
+            radioButtonOption3.AutoSize = true;
+            radioButtonOption3.Location = new Point(0, radioButtonOption2.Location.Y + radioButtonOption2.Height + 15);
+            panelOptions.Controls.Add(radioButtonOption3);
+
+            RadioButton radioButtonOption4 = new RadioButton();
+            radioButtonOption4.Text = "Phương án D";
+            radioButtonOption4.AutoSize = true;
+            radioButtonOption4.Location = new Point(0, radioButtonOption3.Location.Y + radioButtonOption3.Height + 15);
+            panelOptions.Controls.Add(radioButtonOption4);
+
+            groupBoxQuestion.Controls.Add(panelOptions);
+
+            pnCauHoi.Controls.Add(groupBoxQuestion);
+        }
+
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
 
@@ -376,6 +444,9 @@ namespace PhanMemThiTracNghiem
                     break;
                 case 3:
                     tabMonHoc_Click();
+                    break;
+                case 5:
+                    tabCauHoi_Click();
                     break;
             }
         }
