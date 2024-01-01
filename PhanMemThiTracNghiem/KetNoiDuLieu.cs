@@ -72,9 +72,9 @@ namespace PhanMemThiTracNghiem
             if (this.OpenConnection())
             {
                 MySqlCommand cmd = new MySqlCommand(sql, this.connection);
-                    cmd.ExecuteNonQuery();
                 try
                 {
+                    cmd.ExecuteNonQuery();
                     this.CloseConnection();
                     return true;
                 } catch (MySqlException ex) { }
