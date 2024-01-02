@@ -179,6 +179,7 @@ namespace PhanMemThiTracNghiem
 
         private void tabHocSinh_HienThiHocSinh()
         {
+            
             string maLop = GenerateSlug(cbLopHoc.Text);
             string sql = $"SELECT HOC_SINH.*, LOP.TenLop, YEAR(LOP.NienKhoa) AS NamHoc, DATE_FORMAT(HOC_SINH.NamSinh, '%d/%m/%Y') AS NgaySinh FROM HOC_SINH JOIN LOP ON LOP.MaLop = HOC_SINH.MaLop WHERE HOC_SINH.MaLop='{maLop}';";
             DataTable dt = ketNoi.SelectDuLieu(sql);
@@ -257,6 +258,7 @@ namespace PhanMemThiTracNghiem
 
         private void tabMonHoc_HienThiMonHoc()
         {
+            dgvMonHoc.Size = new Size(0, this.Height - 155);
             string sql = "SELECT * FROM MON_HOC";
             DataTable dt = ketNoi.SelectDuLieu(sql);
             if (dt != null)
@@ -282,7 +284,7 @@ namespace PhanMemThiTracNghiem
         {
             string maLop = GenerateSlug(cbLopTabMH.Text);
             string sql = $"SELECT MON_HOC.*, LOP_CO_MH.TenGV FROM MON_HOC JOIN LOP_CO_MH ON MON_HOC.MaMH = LOP_CO_MH.MaMH JOIN LOP ON LOP_CO_MH.MaLop = LOP.MaLop WHERE LOP.MaLop = '{maLop}';";
-            
+            dgvMonHocCuaLop.Size = new Size(0, this.Height - 210);
             DataTable dt = ketNoi.SelectDuLieu(sql);
             if (dt != null)
             {
@@ -328,7 +330,6 @@ namespace PhanMemThiTracNghiem
                 {
                     MessageBox.Show("Môn học đã tồn tại!");
                 }
-
             }
             else
             {
@@ -375,55 +376,289 @@ namespace PhanMemThiTracNghiem
             this.tabMonHoc_HienThiMonHoc();
         }
 
+        private void tabCauHoi_ThemCauHoiCuaMonHoc_Click(object sender, EventArgs e)
+        {
+            bool check = this.tbCauHoi.Text.Length > 0 &&
+                         this.tbDapAnA.Text.Length > 0 &&
+                         this.tbDapAnB.Text.Length > 0 &&
+                         this.tbDapAnC.Text.Length > 0 &&
+                         this.tbDapAnD.Text.Length > 0;
+
+            if (check)
+            {
+                int id = 1;
+                string maMH = GenerateSlug(cbMonHocTabCH.Text);
+                string sql = $"SELECT COUNT(*) as TongCH FROM CAU_HOI WHERE MaMH='{maMH}';";
+                DataTable dt = ketNoi.SelectDuLieu(sql);
+                if (dt != null)
+                {
+                    id = int.Parse(dt.Rows[0]["TongCH"].ToString()) + 1;
+                }
+                string dapAnDung = "A";
+                if (rbtnDapAnB.Checked)
+                {
+                    dapAnDung = "B";
+                } else if (rbtnDapAnC.Checked)
+                {
+                    dapAnDung = "C";
+                } else if (rbtnDapAnD.Checked)
+                {
+                    dapAnDung = "D";
+                }
+                sql = $"INSERT INTO CAU_HOI (MaCH, NoiDungCH, DapAnA, DapAnB, DapAnC, DapAnD, DapAnDung, MaMH) VALUES ('{id}-{maMH}', '{tbCauHoi.Text}', '{tbDapAnA.Text}', '{tbDapAnB.Text}', '{tbDapAnC.Text}', '{tbDapAnD.Text}', '{dapAnDung}', '{maMH}');";
+
+                if (this.ketNoi.ExecuteNonQuery(sql))
+                {
+                    this.tbCauHoi.Text = "";
+                    this.tbDapAnA.Text = "";
+                    this.tbDapAnB.Text = "";
+                    this.tbDapAnC.Text = "";
+                    this.tbDapAnD.Text = "";
+                    this.tabCauHoi_HienThiCauHoiCuaMonHoc();
+                }
+                else
+                {
+                    MessageBox.Show("Có lỗi xảy ra!");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Vui lòng nhập đủ thông tin!");
+            }
+        }
+
+        private void tabCauHoi_HienThiCauHoiCuaMonHoc()
+        {
+            string maMH = GenerateSlug(cbMonHocTabCH.Text);
+            string sql = $"SELECT * FROM CAU_HOI WHERE MaMH='{maMH}';";
+            DataTable dt = ketNoi.SelectDuLieu(sql);
+            if (dt != null)
+            {
+                int y = 0;
+                pnCauHoi.Controls.Clear();
+                pnCauHoi.Size = new Size(0, this.Height - 300);
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    DataRow dtRow = dt.Rows[i];
+                    // Tạo một GroupBox chứa câu hỏi
+                    GroupBox groupBoxQuestion = new GroupBox();
+                    groupBoxQuestion.Text = $"Câu {i + 1}";
+                    groupBoxQuestion.AutoSize = true;
+                    groupBoxQuestion.Location = new Point(0, y);
+                    groupBoxQuestion.Size = new Size(this.Width - 50, 240);
+                    groupBoxQuestion.BackColor = System.Drawing.Color.Bisque;
+
+                    // Tạo một Label trong GroupBox để hiển thị câu hỏi
+                    Label lblQuestion = new Label();
+                    lblQuestion.Text = dtRow["NoiDungCH"].ToString();
+                    lblQuestion.AutoSize = true;
+                    lblQuestion.Location = new Point(10, 20);
+                    lblQuestion.MaximumSize = new Size(groupBoxQuestion.Width - 30, 0);
+                    groupBoxQuestion.Controls.Add(lblQuestion);
+
+                    // Tạo một Panel để chứa các phương án trả lời
+                    Panel panelOptions = new Panel();
+                    panelOptions.Location = new Point(20, lblQuestion.Location.Y + lblQuestion.Height + 25);
+                    panelOptions.AutoSize = true;
+
+                    // Tạo các RadioButton để hiển thị các phương án trả lời trong Panel
+                    RadioButton radioButtonOption1 = new RadioButton();
+                    radioButtonOption1.Text = "A. " + dtRow["DapAnA"].ToString();
+                    radioButtonOption1.Checked = dtRow["DapAnDung"].ToString() == "A";
+                    radioButtonOption1.Enabled = radioButtonOption1.Checked;
+                    radioButtonOption1.AutoSize = true;
+                    panelOptions.Controls.Add(radioButtonOption1);
+
+                    RadioButton radioButtonOption2 = new RadioButton();
+                    radioButtonOption2.Text = "B. " + dtRow["DapAnB"].ToString();
+                    radioButtonOption2.Checked = dtRow["DapAnDung"].ToString() == "B";
+                    radioButtonOption2.Enabled = radioButtonOption2.Checked;
+                    radioButtonOption2.AutoSize = true;
+                    radioButtonOption2.Location = new Point(0, radioButtonOption1.Location.Y + radioButtonOption1.Height + 15);
+                    panelOptions.Controls.Add(radioButtonOption2);
+
+                    RadioButton radioButtonOption3 = new RadioButton();
+                    radioButtonOption3.Text = "C. " + dtRow["DapAnC"].ToString();
+                    radioButtonOption3.Checked = dtRow["DapAnDung"].ToString() == "C";
+                    radioButtonOption3.AutoSize = true;
+                    radioButtonOption3.Enabled = radioButtonOption3.Checked;
+                    radioButtonOption3.Location = new Point(0, radioButtonOption2.Location.Y + radioButtonOption2.Height + 15);
+                    panelOptions.Controls.Add(radioButtonOption3);
+
+                    RadioButton radioButtonOption4 = new RadioButton();
+                    radioButtonOption4.Text = "D. " + dtRow["DapAnD"].ToString();
+                    radioButtonOption4.Checked = dtRow["DapAnDung"].ToString() == "D";
+                    radioButtonOption4.AutoSize = true;
+                    radioButtonOption4.Enabled = radioButtonOption4.Checked;
+                    radioButtonOption4.Location = new Point(0, radioButtonOption3.Location.Y + radioButtonOption3.Height + 15);
+                    panelOptions.Controls.Add(radioButtonOption4);
+
+                    groupBoxQuestion.Controls.Add(panelOptions);
+                    y += groupBoxQuestion.Size.Height + 10;
+
+                    pnCauHoi.Controls.Add(groupBoxQuestion);
+                }
+            }
+        }
+
         private void tabCauHoi_Click()
         {
             this.Text = "Quản lý câu hỏi | Hệ thống thi trắc nghiệm";
             this.tabCauHoi_HienThiDropDownListMonHoc();
+            this.tabCauHoi_HienThiCauHoiCuaMonHoc();
+        }
 
-            // Tạo một GroupBox chứa câu hỏi
-            GroupBox groupBoxQuestion = new GroupBox();
-            groupBoxQuestion.Text = "Câu hỏi 1";
-            groupBoxQuestion.AutoSize = true;
 
-            // Tạo một Label trong GroupBox để hiển thị câu hỏi
-            Label lblQuestion = new Label();
-            lblQuestion.Text = "Đây là câu hỏi trắc nghiệm? Đây là câu hỏi trắc nghiệm? Đây là câu hỏi trắc nghiệm?Đây là câu hỏi trắc nghiệm?Đây là câu hỏi trắc nghiệm? Đây là câu hỏi trắc nghiệm?Đây là câu hỏi trắc nghiệm? Đây là câu hỏi trắc nghiệm? Đây là câu hỏi trắc nghiệm? Đây là câu hỏi trắc nghiệm?Đây là câu hỏi trắc nghiệm?Đây là câu hỏi trắc nghiệm?";
-            lblQuestion.AutoSize = true;
-            lblQuestion.Location = new Point(10, 20);
-            groupBoxQuestion.Controls.Add(lblQuestion);
+        private void tabBoDe_HienThiDropDownListMonHoc()
+        {
+            string sql = "SELECT * FROM MON_HOC;";
+            DataTable dt = ketNoi.SelectDuLieu(sql);
+            if (dt != null)
+            {
+                cbMHTabBoDe.Items.Clear();
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    DataRow dtRow = dt.Rows[i];
+                    string item = dtRow["TenMH"].ToString();
+                    cbMHTabBoDe.Items.Add(item);
+                }
+                cbMHTabBoDe.SelectedIndex = 0;
+            }
+        }
 
-            // Tạo một Panel để chứa các phương án trả lời
-            Panel panelOptions = new Panel();
-            panelOptions.Location = new Point(20, lblQuestion.Location.Y + lblQuestion.Height + 25);
-            panelOptions.AutoSize = true;
+        private void tabBoDe_HienThiDropDownListBoDeCuaMonHoc()
+        {
+            string maMH = GenerateSlug(cbMHTabBoDe.Text);
+            string sql = $"SELECT * FROM BO_DE WHERE MaMH='{maMH}';";
+            DataTable dt = ketNoi.SelectDuLieu(sql);
+            if (dt != null)
+            {
+                cbBoDe.Items.Clear();
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    DataRow dtRow = dt.Rows[i];
+                    string item = dtRow["MaBoDe"].ToString();
+                    cbBoDe.Items.Add(item);
+                }
+                cbBoDe.SelectedIndex = dt.Rows.Count - 1;
+            }
+        }
 
-            // Tạo các RadioButton để hiển thị các phương án trả lời trong Panel
-            RadioButton radioButtonOption1 = new RadioButton();
-            radioButtonOption1.Text = "Phương án A";
-            radioButtonOption1.AutoSize = true;
-            panelOptions.Controls.Add(radioButtonOption1);
+        private void tabBoDe_HienThiCheckBoxListCauHoiCuaMonHoc()
+        {
+            string maMH = GenerateSlug(cbMHTabBoDe.Text);
+            string maBD = cbBoDe.Text;
+            string sql = $"SELECT * FROM CAU_HOI WHERE MaMH='{maMH}' AND MaCH NOT IN (SELECT MaCH FROM CH_CUA_BD WHERE MaBoDe='{maBD}');";
+            DataTable dt = ketNoi.SelectDuLieu(sql);
+            if (dt != null)
+            {
+                cblTatCaCHTabBD.Items.Clear();
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    DataRow dtRow = dt.Rows[i];
+                    string item = dtRow["MaCH"].ToString() + "_" +dtRow["NoiDungCH"].ToString();
+                    cblTatCaCHTabBD.Items.Add(item);
+                }
+            }
+        }
 
-            RadioButton radioButtonOption2 = new RadioButton();
-            radioButtonOption2.Text = "Phương án B";
-            radioButtonOption2.AutoSize = true;
-            radioButtonOption2.Location = new Point(0, radioButtonOption1.Location.Y + radioButtonOption1.Height + 15);
-            panelOptions.Controls.Add(radioButtonOption2);
+        private void tabBoDe_HienThiCheckBoxListCauHoiCuaBoDe()
+        {
+            string maBD = cbBoDe.Text;
+            string sql = $"SELECT * FROM CAU_HOI JOIN CH_CUA_BD WHERE CAU_HOI.MaCH = CH_CUA_BD.MaCH AND CH_CUA_BD.MaBoDe='{maBD}';";
+            DataTable dt = ketNoi.SelectDuLieu(sql);
+            if (dt != null)
+            {
+                cblCauHoiCuaBoDe.Items.Clear();
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    DataRow dtRow = dt.Rows[i];
+                    string item = dtRow["MaCH"].ToString() + "_" + dtRow["NoiDungCH"].ToString();
+                    cblCauHoiCuaBoDe.Items.Add(item);
+                }
+                lbTongCHCuaBD.Text = dt.Rows.Count.ToString();
+            }
+        }
 
-            RadioButton radioButtonOption3 = new RadioButton();
-            radioButtonOption3.Text = "Phương án C";
-            radioButtonOption3.AutoSize = true;
-            radioButtonOption3.Location = new Point(0, radioButtonOption2.Location.Y + radioButtonOption2.Height + 15);
-            panelOptions.Controls.Add(radioButtonOption3);
+        private void tabBoDe_ThemBoDeMonHoc_Click(object sender, EventArgs e)
+        {
+            int id = 1;
+            string maMH = GenerateSlug(cbMHTabBoDe.Text);
+            string sql = $"SELECT COUNT(*) as TongBD FROM BO_DE WHERE MaMH='{maMH}';";
+            DataTable dt = ketNoi.SelectDuLieu(sql);
+            if (dt != null)
+            {
+                id = int.Parse(dt.Rows[0]["TongBD"].ToString()) + 1;
+            }
+            string tempMaBD = id.ToString();
+            if (tempMaBD.Length == 1)
+            {
+                tempMaBD = "00" + tempMaBD;
+            } else if (tempMaBD.Length == 2)
+            {
+                tempMaBD = "0" + tempMaBD;
+            }
+            string maBD = tempMaBD + "_" + GenerateSlug(cbMHTabBoDe.Text);
+            sql = $"INSERT INTO BO_DE (MaBoDe, MaMH) VALUES ('{maBD}', '{maMH}');";
 
-            RadioButton radioButtonOption4 = new RadioButton();
-            radioButtonOption4.Text = "Phương án D";
-            radioButtonOption4.AutoSize = true;
-            radioButtonOption4.Location = new Point(0, radioButtonOption3.Location.Y + radioButtonOption3.Height + 15);
-            panelOptions.Controls.Add(radioButtonOption4);
+            if (this.ketNoi.ExecuteNonQuery(sql))
+            {
+                tabBoDe_HienThiDropDownListBoDeCuaMonHoc();
+            }
+            else
+            {
+                MessageBox.Show("Có lỗi xảy ra!");
+            }
+        }
 
-            groupBoxQuestion.Controls.Add(panelOptions);
+        private void tabBoDe_XoaCauHoiKhoiBoDeMonHoc_Click(object sender, EventArgs e)
+        {
+            string maBD = cbBoDe.Text;
+            foreach (var item in cblCauHoiCuaBoDe.CheckedItems)
+            {
+                string maCH = item.ToString().Split('_')[0];
+                string sql = $"DELETE FROM CH_CUA_BD WHERE MaBoDe='{maBD}' AND MaCH='{maCH}';";
+                if (this.ketNoi.ExecuteNonQuery(sql))
+                {
+                    
+                }
+                else
+                {
+                    MessageBox.Show("Có lỗi xảy ra!");
+                }
+            }
+            tabBoDe_HienThiCheckBoxListCauHoiCuaBoDe();
+            tabBoDe_HienThiCheckBoxListCauHoiCuaMonHoc();
+        }
 
-            pnCauHoi.Controls.Add(groupBoxQuestion);
+        private void tabBoDe_ThemCauHoiVaoBoDeMonHoc_Click(object sender, EventArgs e)
+        {
+            string maBD = cbBoDe.Text;
+            foreach (var item in cblTatCaCHTabBD.CheckedItems)
+            {
+                string maCH = item.ToString().Split('_')[0];
+                string sql = $"INSERT INTO CH_CUA_BD (MaBoDe, MaCH) VALUES ('{maBD}', '{maCH}');";
+                if (this.ketNoi.ExecuteNonQuery(sql))
+                {
+
+                }
+                else
+                {
+                    MessageBox.Show("Có lỗi xảy ra!");
+                }
+            }
+            tabBoDe_HienThiCheckBoxListCauHoiCuaBoDe();
+            tabBoDe_HienThiCheckBoxListCauHoiCuaMonHoc();
+
+        }
+
+        private void tabBoDe_Click()
+        {
+            this.Text = "Quản lý bộ đề | Hệ thống thi trắc nghiệm";
+            tabBoDe_HienThiDropDownListMonHoc();
+            tabBoDe_HienThiDropDownListBoDeCuaMonHoc();
+            tabBoDe_HienThiCheckBoxListCauHoiCuaBoDe();
+            tabBoDe_HienThiCheckBoxListCauHoiCuaMonHoc();
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -447,6 +682,9 @@ namespace PhanMemThiTracNghiem
                     break;
                 case 5:
                     tabCauHoi_Click();
+                    break;
+                case 6:
+                    tabBoDe_Click();
                     break;
             }
         }
@@ -496,6 +734,43 @@ namespace PhanMemThiTracNghiem
         private void cbLopHoc_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.tabHocSinh_HienThiHocSinh();
+        }
+
+        private void cbMonHocTabCH_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            this.tabCauHoi_HienThiCauHoiCuaMonHoc();
+        }
+
+        private void QuanTri_SizeChanged(object sender, EventArgs e)
+        {
+            int tabDangChon = tabControl1.SelectedIndex;
+            switch (tabDangChon)
+            {
+                case 3:
+                    dgvMonHoc.Size = new Size(0, this.Height - 155);
+                    dgvMonHocCuaLop.Size = new Size(0, this.Height - 210);
+                    break;
+                case 5:
+                    this.tabCauHoi_HienThiCauHoiCuaMonHoc();
+                    break;
+            }
+        }
+
+        private void label21_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void cbMHTabBoDe_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            tabBoDe_HienThiDropDownListBoDeCuaMonHoc();
+            tabBoDe_HienThiCheckBoxListCauHoiCuaMonHoc();
+        }
+
+        private void cbBoDe_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            tabBoDe_HienThiCheckBoxListCauHoiCuaBoDe();
+            tabBoDe_HienThiCheckBoxListCauHoiCuaMonHoc();
         }
     }
 }
