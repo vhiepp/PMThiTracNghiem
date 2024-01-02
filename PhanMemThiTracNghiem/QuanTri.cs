@@ -661,6 +661,227 @@ namespace PhanMemThiTracNghiem
             tabBoDe_HienThiCheckBoxListCauHoiCuaMonHoc();
         }
 
+        private void tabKyThi_ThemKyThi_Click(object sender, EventArgs e)
+        {
+            bool check = this.tbMaKT.Text.Length > 0 &&
+                         this.tbTenKT.Text.Length > 0;
+            if (check)
+            {
+                if (this.ketNoi.SelectDuLieu($"SELECT * FROM KY_THI WHERE MaKT='{GenerateSlug(tbMaKT.Text)}'").Rows.Count == 0)
+                {
+                    string ngay = dtpNamHocTabKT.Value.Day.ToString();
+                    string thang = dtpNamHocTabKT.Value.Month.ToString();
+                    string nam = dtpNamHocTabKT.Value.Year.ToString();
+
+                    string sql = $"INSERT INTO KY_THI (MaKT, TenKT, NamHoc) VALUES ('{GenerateSlug(this.tbMaKT.Text)}', '{this.tbTenKT.Text}', '{nam}-{thang}-{ngay}')";
+
+                    if (this.ketNoi.ExecuteNonQuery(sql))
+                    {
+                        this.tbMaKT.Text = "";
+                        this.tbTenKT.Text = "";
+                        tabKyThi_HienThiKyThi();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Có lỗi xảy ra!");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Mã kỳ thi đã tồn tại!");
+                }
+
+            }
+            else
+            {
+                MessageBox.Show("Vui lòng nhập đủ thông tin!");
+            }
+        }
+
+        private void tabKyThi_HienThiKyThi()
+        {
+            dgvKyThi.Size = new Size(0, this.Height - 210);
+            string sql = "SELECT *, YEAR(NamHoc) AS Nam FROM KY_THI";
+            DataTable dt = ketNoi.SelectDuLieu(sql);
+            if (dt != null)
+            {
+                DataTable dtTemp = new DataTable();
+                dtTemp.Columns.Add(new DataColumn("MaKT", typeof(string)));
+                dtTemp.Columns.Add(new DataColumn("TenKT", typeof(string)));
+                dtTemp.Columns.Add(new DataColumn("NamHocKT", typeof(string)));
+
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    DataRow rowTemp = dtTemp.NewRow();
+                    DataRow dtRow = dt.Rows[i];
+                    rowTemp["MaKT"] = dtRow["MaKT"].ToString();
+                    rowTemp["TenKT"] = dtRow["TenKT"].ToString();
+                    rowTemp["NamHocKT"] = dtRow["Nam"].ToString();
+                    dtTemp.Rows.Add(rowTemp);
+                }
+                this.dgvKyThi.DataSource = dtTemp;
+            }
+        }
+
+        private void tabKyThi_HienThiDropDownListKyThi()
+        {
+            string sql = "SELECT * FROM KY_THI;";
+            DataTable dt = ketNoi.SelectDuLieu(sql);
+            if (dt != null)
+            {
+                cbKyThi.Items.Clear();
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    DataRow dtRow = dt.Rows[i];
+                    string item = dtRow["MaKT"].ToString() + "_" + dtRow["TenKT"].ToString();
+                    cbKyThi.Items.Add(item);
+                }
+                cbKyThi.SelectedIndex = dt.Rows.Count - 1;
+            }
+        }
+
+        private void tabKyThi_HienThiDropDownListMonThiTabKyThi()
+        {
+            string sql = "SELECT * FROM MON_HOC;";
+            DataTable dt = ketNoi.SelectDuLieu(sql);
+            if (dt != null)
+            {
+                cbMonThiTabKT.Items.Clear();
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    DataRow dtRow = dt.Rows[i];
+                    string item = dtRow["TenMH"].ToString();
+                    cbMonThiTabKT.Items.Add(item);
+                }
+                if (dt.Rows.Count > 0)
+                {
+                    cbMonThiTabKT.SelectedIndex = 0;
+                }
+            }
+        }
+
+        private void tabKyThi_HienThiDropDownListBoDeMonHocCuaKyThi()
+        {
+            string maMH = GenerateSlug(cbMonThiTabKT.Text);
+            string sql = $"SELECT * FROM BO_DE WHERE MaMH='{maMH}';";
+            DataTable dt = ketNoi.SelectDuLieu(sql);
+            if (dt != null)
+            {
+                cbBoDeTabKyThi.Items.Clear();
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    DataRow dtRow = dt.Rows[i];
+                    int count = int.Parse(ketNoi.SelectDuLieu($"SELECT COUNT(*) as SoCauHoi FROM CH_CUA_BD WHERE MaBoDe='{dtRow["MaBoDe"].ToString()}';").Rows[0]["SoCauHoi"].ToString());
+                    string item = dtRow["MaBoDe"].ToString() + " " + count + " câu";
+                    cbBoDeTabKyThi.Items.Add(item);
+                }
+                if (dt.Rows.Count > 0)
+                {
+                    cbBoDeTabKyThi.SelectedIndex = 0;
+                }
+            }
+        }
+
+        private void tabKyThi_ThemMonHocCuaKyThi_Click(object sender, EventArgs e)
+        {
+            bool check = this.cbBoDeTabKyThi.Text.Length > 0 &&
+                         this.nbTGLamBai.Value > 0;
+            string maKT = cbKyThi.Text.Split('_')[0];
+            string maMH = GenerateSlug(cbMonThiTabKT.Text);
+            string maBD = cbBoDeTabKyThi.Text.Split(' ')[0];
+            
+            if (check)
+            {
+                if (this.ketNoi.SelectDuLieu($"SELECT * FROM MON_THI WHERE MaKT='{maKT}' AND MaMH='{maMH}'").Rows.Count == 0)
+                {
+                    int count = int.Parse(ketNoi.SelectDuLieu($"SELECT COUNT(*) as SoCauHoi FROM CH_CUA_BD WHERE MaBoDe='{maBD}';").Rows[0]["SoCauHoi"].ToString());
+                    if (count > 0)
+                    {
+                        string ngay = dtpNgayThi.Value.Day.ToString();
+                        string thang = dtpNgayThi.Value.Month.ToString();
+                        string nam = dtpNgayThi.Value.Year.ToString();
+
+                        string sql = $"INSERT INTO MON_THI (MaKT, MaMH, MaBoDe, ThoiGian, NgayThi) VALUES ('{maKT}', '{maMH}', '{maBD}', '{nbTGLamBai.Value}','{nam}-{thang}-{ngay}')";
+
+                        if (this.ketNoi.ExecuteNonQuery(sql))
+                        {
+                            tabMonThiCuaKyThi_HienThiMonThi();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Có lỗi xảy ra!");
+                        }
+                    } else
+                    {
+                        MessageBox.Show("Bộ đề này chưa có câu hỏi nào!");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Môn thi đã có trong kỳ thi!");
+                }
+
+            }
+            else
+            {
+                if (this.cbBoDeTabKyThi.Text.Length == 0)
+                {
+                    MessageBox.Show("Môn học chưa có bộ đề!");
+                } else if (this.nbTGLamBai.Value <= 0)
+                {
+                    MessageBox.Show("Thời gian làm bài phải lớn hơn 0!");
+                } else
+                {
+                    MessageBox.Show("Có lỗi xảy ra!");
+                }
+            }
+        }
+
+
+
+        private void tabKyThi_Click()
+        {
+            this.Text = "Quản lý kỳ thi | Hệ thống thi trắc nghiệm";
+            tabKyThi_HienThiKyThi();
+        }
+
+        private void tabMonThiCuaKyThi_HienThiMonThi()
+        {
+            dgvMonThiCuaKT.Size = new Size(0, this.Height - 240);
+            string maKT = cbKyThi.Text.Split('_')[0];
+            string sql = $"SELECT MON_THI.*, MON_HOC.TenMH, DATE_FORMAT(MON_THI.NgayThi, '%d/%m/%Y') AS NT FROM MON_THI JOIN MON_HOC ON MON_HOC.MaMH = MON_THI.MaMH WHERE MON_THI.MaKT='{maKT}';";
+            DataTable dt = ketNoi.SelectDuLieu(sql);
+            if (dt != null)
+            {
+                DataTable dtTemp = new DataTable();
+                dtTemp.Columns.Add(new DataColumn("TenMonThi", typeof(string)));
+                dtTemp.Columns.Add(new DataColumn("BoDeThi", typeof(string)));
+                dtTemp.Columns.Add(new DataColumn("TGLamBai", typeof(string)));
+                dtTemp.Columns.Add(new DataColumn("NgayThi", typeof(string)));
+
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    DataRow rowTemp = dtTemp.NewRow();
+                    DataRow dtRow = dt.Rows[i];
+                    rowTemp["TenMonThi"] = dtRow["TenMH"].ToString();
+                    rowTemp["BoDeThi"] = dtRow["MaBoDe"].ToString();
+                    rowTemp["TGLamBai"] = dtRow["ThoiGian"].ToString();
+                    rowTemp["NgayThi"] = dtRow["NT"].ToString();
+                    dtTemp.Rows.Add(rowTemp);
+                }
+                this.dgvMonThiCuaKT.DataSource = dtTemp;
+            }
+        }
+
+        private void tabMonThiCuaKyThi_Click()
+        {
+            this.Text = "Quản lý môn thi | Hệ thống thi trắc nghiệm";
+            tabKyThi_HienThiDropDownListKyThi();
+            tabKyThi_HienThiDropDownListMonThiTabKyThi();
+            tabKyThi_HienThiDropDownListBoDeMonHocCuaKyThi();
+            tabMonThiCuaKyThi_HienThiMonThi();
+        }
+
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
 
@@ -679,6 +900,9 @@ namespace PhanMemThiTracNghiem
                     break;
                 case 3:
                     tabMonHoc_Click();
+                    break;
+                case 4:
+                    tabKyThi_Click();
                     break;
                 case 5:
                     tabCauHoi_Click();
@@ -750,6 +974,10 @@ namespace PhanMemThiTracNghiem
                     dgvMonHoc.Size = new Size(0, this.Height - 155);
                     dgvMonHocCuaLop.Size = new Size(0, this.Height - 210);
                     break;
+                case 4:
+                    dgvMonThiCuaKT.Size = new Size(0, this.Height - 240);
+                    dgvKyThi.Size = new Size(0, this.Height - 210);
+                    break;
                 case 5:
                     this.tabCauHoi_HienThiCauHoiCuaMonHoc();
                     break;
@@ -765,12 +993,47 @@ namespace PhanMemThiTracNghiem
         {
             tabBoDe_HienThiDropDownListBoDeCuaMonHoc();
             tabBoDe_HienThiCheckBoxListCauHoiCuaMonHoc();
+            tabBoDe_HienThiCheckBoxListCauHoiCuaBoDe();
         }
 
         private void cbBoDe_SelectedIndexChanged(object sender, EventArgs e)
         {
             tabBoDe_HienThiCheckBoxListCauHoiCuaBoDe();
             tabBoDe_HienThiCheckBoxListCauHoiCuaMonHoc();
+        }
+
+        private void tabPage10_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tabControl3_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int tabDangChon = tabControl3.SelectedIndex;
+            switch (tabDangChon)
+            {
+                case 0:
+                    tabKyThi_Click();
+                    break;
+                case 1:
+                    tabMonThiCuaKyThi_Click();
+                    break;
+            }
+        }
+
+        private void cbMonThiTabKT_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            tabKyThi_HienThiDropDownListBoDeMonHocCuaKyThi();
+        }
+
+        private void cbKyThi_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            tabMonThiCuaKyThi_HienThiMonThi();
         }
     }
 }

@@ -50,7 +50,9 @@ namespace PhanMemThiTracNghiem
                     MessageBox.Show("OK");
                 } else if (radioButton2.Checked)
                 {
-                    if (tenDangNhap == "admin" && matKhau == "admin")
+                    string sql = $"SELECT * FROM ADMIN WHERE TenDangNhap='{tenDangNhap}' AND MatKhau='{matKhau}';";
+                    
+                    if (ketNoi.SelectDuLieu(sql).Rows.Count > 0)
                     {
                         QuanTri formQuanTri = new QuanTri();
                         formQuanTri.Show();

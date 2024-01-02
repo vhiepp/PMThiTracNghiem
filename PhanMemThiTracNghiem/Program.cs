@@ -16,7 +16,7 @@ namespace PhanMemThiTracNghiem
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new QuanTri());
+            Application.Run(new DangNhap());
         }
     }
 }
