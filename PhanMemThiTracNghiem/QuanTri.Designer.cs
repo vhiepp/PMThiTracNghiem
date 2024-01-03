@@ -36,16 +36,11 @@
             this.button3 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
-            this.tbNienKhoa = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.tbTenGVCN = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.tbTenLop = new System.Windows.Forms.TextBox();
             this.dgvLopHoc = new System.Windows.Forms.DataGridView();
-            this.TenLop = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.TenGVCN = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.NamHoc = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.SiSo = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.cbLopHoc = new System.Windows.Forms.ComboBox();
             this.label8 = new System.Windows.Forms.Label();
@@ -157,11 +152,16 @@
             this.dtpNgayThi = new System.Windows.Forms.DateTimePicker();
             this.label30 = new System.Windows.Forms.Label();
             this.label31 = new System.Windows.Forms.Label();
+            this.label32 = new System.Windows.Forms.Label();
+            this.dtpNamHoc = new System.Windows.Forms.DateTimePicker();
+            this.TenLop = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.TenGVCN = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.NamHoc = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.SiSo = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.TenMonThi = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.BoDeThi = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.TGLamBai = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.NgayThi = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.label32 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvLopHoc)).BeginInit();
@@ -216,11 +216,11 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.dtpNamHoc);
             this.tabPage2.Controls.Add(this.button1);
             this.tabPage2.Controls.Add(this.button3);
             this.tabPage2.Controls.Add(this.button2);
             this.tabPage2.Controls.Add(this.label4);
-            this.tabPage2.Controls.Add(this.tbNienKhoa);
             this.tabPage2.Controls.Add(this.label3);
             this.tabPage2.Controls.Add(this.tbTenGVCN);
             this.tabPage2.Controls.Add(this.label2);
@@ -272,17 +272,9 @@
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.Location = new System.Drawing.Point(95, 100);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(100, 25);
+            this.label4.Size = new System.Drawing.Size(90, 25);
             this.label4.TabIndex = 8;
-            this.label4.Text = "Niên khóa";
-            // 
-            // tbNienKhoa
-            // 
-            this.tbNienKhoa.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbNienKhoa.Location = new System.Drawing.Point(209, 95);
-            this.tbNienKhoa.Name = "tbNienKhoa";
-            this.tbNienKhoa.Size = new System.Drawing.Size(296, 30);
-            this.tbNienKhoa.TabIndex = 7;
+            this.label4.Text = "Năm học";
             // 
             // label3
             // 
@@ -339,42 +331,6 @@
             this.dgvLopHoc.RowTemplate.Height = 24;
             this.dgvLopHoc.Size = new System.Drawing.Size(1080, 440);
             this.dgvLopHoc.TabIndex = 0;
-            // 
-            // TenLop
-            // 
-            this.TenLop.DataPropertyName = "TenLop";
-            this.TenLop.HeaderText = "Tên lớp";
-            this.TenLop.MinimumWidth = 6;
-            this.TenLop.Name = "TenLop";
-            this.TenLop.ReadOnly = true;
-            this.TenLop.Width = 200;
-            // 
-            // TenGVCN
-            // 
-            this.TenGVCN.DataPropertyName = "TenGVCN";
-            this.TenGVCN.HeaderText = "Giáo viên chủ nhiệm";
-            this.TenGVCN.MinimumWidth = 6;
-            this.TenGVCN.Name = "TenGVCN";
-            this.TenGVCN.ReadOnly = true;
-            this.TenGVCN.Width = 250;
-            // 
-            // NamHoc
-            // 
-            this.NamHoc.DataPropertyName = "NamHoc";
-            this.NamHoc.HeaderText = "Niên Khóa";
-            this.NamHoc.MinimumWidth = 6;
-            this.NamHoc.Name = "NamHoc";
-            this.NamHoc.ReadOnly = true;
-            this.NamHoc.Width = 150;
-            // 
-            // SiSo
-            // 
-            this.SiSo.DataPropertyName = "SiSo";
-            this.SiSo.HeaderText = "Sỉ số";
-            this.SiSo.MinimumWidth = 6;
-            this.SiSo.Name = "SiSo";
-            this.SiSo.ReadOnly = true;
-            this.SiSo.Width = 150;
             // 
             // tabPage3
             // 
@@ -1600,6 +1556,62 @@
             this.label31.TabIndex = 55;
             this.label31.Text = "phút";
             // 
+            // label32
+            // 
+            this.label32.AutoSize = true;
+            this.label32.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label32.Location = new System.Drawing.Point(3, 147);
+            this.label32.Name = "label32";
+            this.label32.Size = new System.Drawing.Size(172, 18);
+            this.label32.TabIndex = 56;
+            this.label32.Text = "Các môn trong kỳ thi này";
+            // 
+            // dtpNamHoc
+            // 
+            this.dtpNamHoc.CalendarFont = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.dtpNamHoc.CustomFormat = "yyyy";
+            this.dtpNamHoc.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dtpNamHoc.Location = new System.Drawing.Point(209, 98);
+            this.dtpNamHoc.Name = "dtpNamHoc";
+            this.dtpNamHoc.Size = new System.Drawing.Size(296, 27);
+            this.dtpNamHoc.TabIndex = 53;
+            // 
+            // TenLop
+            // 
+            this.TenLop.DataPropertyName = "TenLop";
+            this.TenLop.HeaderText = "Tên lớp";
+            this.TenLop.MinimumWidth = 6;
+            this.TenLop.Name = "TenLop";
+            this.TenLop.ReadOnly = true;
+            this.TenLop.Width = 200;
+            // 
+            // TenGVCN
+            // 
+            this.TenGVCN.DataPropertyName = "TenGVCN";
+            this.TenGVCN.HeaderText = "Giáo viên chủ nhiệm";
+            this.TenGVCN.MinimumWidth = 6;
+            this.TenGVCN.Name = "TenGVCN";
+            this.TenGVCN.ReadOnly = true;
+            this.TenGVCN.Width = 250;
+            // 
+            // NamHoc
+            // 
+            this.NamHoc.DataPropertyName = "NamHoc";
+            this.NamHoc.HeaderText = "Năm học";
+            this.NamHoc.MinimumWidth = 6;
+            this.NamHoc.Name = "NamHoc";
+            this.NamHoc.ReadOnly = true;
+            this.NamHoc.Width = 150;
+            // 
+            // SiSo
+            // 
+            this.SiSo.DataPropertyName = "SiSo";
+            this.SiSo.HeaderText = "Sỉ số";
+            this.SiSo.MinimumWidth = 6;
+            this.SiSo.Name = "SiSo";
+            this.SiSo.ReadOnly = true;
+            this.SiSo.Width = 150;
+            // 
             // TenMonThi
             // 
             this.TenMonThi.DataPropertyName = "TenMonThi";
@@ -1621,7 +1633,7 @@
             // TGLamBai
             // 
             this.TGLamBai.DataPropertyName = "TGLamBai";
-            this.TGLamBai.HeaderText = "TG làm bài";
+            this.TGLamBai.HeaderText = "TG làm bài (phút)";
             this.TGLamBai.MinimumWidth = 6;
             this.TGLamBai.Name = "TGLamBai";
             this.TGLamBai.ReadOnly = true;
@@ -1635,16 +1647,6 @@
             this.NgayThi.Name = "NgayThi";
             this.NgayThi.ReadOnly = true;
             this.NgayThi.Width = 125;
-            // 
-            // label32
-            // 
-            this.label32.AutoSize = true;
-            this.label32.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label32.Location = new System.Drawing.Point(3, 147);
-            this.label32.Name = "label32";
-            this.label32.Size = new System.Drawing.Size(172, 18);
-            this.label32.TabIndex = 56;
-            this.label32.Text = "Các môn trong kỳ thi này";
             // 
             // QuanTri
             // 
@@ -1705,15 +1707,10 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox tbTenGVCN;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox tbNienKhoa;
         private MySql.Data.MySqlClient.MySqlCommand mySqlCommand1;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.DataGridView dgvLopHoc;
-        private System.Windows.Forms.DataGridViewTextBoxColumn TenLop;
-        private System.Windows.Forms.DataGridViewTextBoxColumn TenGVCN;
-        private System.Windows.Forms.DataGridViewTextBoxColumn NamHoc;
-        private System.Windows.Forms.DataGridViewTextBoxColumn SiSo;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button5;
@@ -1821,10 +1818,15 @@
         private System.Windows.Forms.Label label30;
         private System.Windows.Forms.Label label31;
         private System.Windows.Forms.ComboBox cbKyThi;
+        private System.Windows.Forms.Label label32;
+        private System.Windows.Forms.DateTimePicker dtpNamHoc;
+        private System.Windows.Forms.DataGridViewTextBoxColumn TenLop;
+        private System.Windows.Forms.DataGridViewTextBoxColumn TenGVCN;
+        private System.Windows.Forms.DataGridViewTextBoxColumn NamHoc;
+        private System.Windows.Forms.DataGridViewTextBoxColumn SiSo;
         private System.Windows.Forms.DataGridViewTextBoxColumn TenMonThi;
         private System.Windows.Forms.DataGridViewTextBoxColumn BoDeThi;
         private System.Windows.Forms.DataGridViewTextBoxColumn TGLamBai;
         private System.Windows.Forms.DataGridViewTextBoxColumn NgayThi;
-        private System.Windows.Forms.Label label32;
     }
 }

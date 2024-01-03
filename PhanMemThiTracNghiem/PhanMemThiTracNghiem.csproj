@@ -110,7 +110,20 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="HocSinh.cs" />
     <Compile Include="KetNoiDuLieu.cs" />
+    <Compile Include="LamBaiThi.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LamBaiThi.Designer.cs">
+      <DependentUpon>LamBaiThi.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MonThiCuaBan.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MonThiCuaBan.Designer.cs">
+      <DependentUpon>MonThiCuaBan.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QuanTri.cs">
@@ -119,11 +132,23 @@
     <Compile Include="QuanTri.Designer.cs">
       <DependentUpon>QuanTri.cs</DependentUpon>
     </Compile>
+    <Compile Include="XemKetQuaThi.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="XemKetQuaThi.Designer.cs">
+      <DependentUpon>XemKetQuaThi.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="DangNhap.resx">
       <DependentUpon>DangNhap.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LamBaiThi.resx">
+      <DependentUpon>LamBaiThi.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MonThiCuaBan.resx">
+      <DependentUpon>MonThiCuaBan.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -136,6 +161,9 @@
     </Compile>
     <EmbeddedResource Include="QuanTri.resx">
       <DependentUpon>QuanTri.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="XemKetQuaThi.resx">
+      <DependentUpon>XemKetQuaThi.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

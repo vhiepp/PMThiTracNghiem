@@ -78,18 +78,18 @@ namespace PhanMemThiTracNghiem
 
         private void tabLopHoc_ThemLopHoc_Click(object sender, EventArgs e)
         {
-            bool check = this.tbTenLop.Text.Length > 0 && this.tbTenGVCN.Text.Length > 0 && this.tbNienKhoa.Text.Length > 0;
+            bool check = this.tbTenLop.Text.Length > 0 && this.tbTenGVCN.Text.Length > 0;
             if (check)
             {
-                if (this.ketNoi.SelectDuLieu($"SELECT * FROM LOP WHERE MaLop='{this.GenerateSlug(this.tbTenLop.Text + " " + this.tbNienKhoa.Text)}'").Rows.Count == 0)
+                string namHoc = dtpNamHoc.Value.Year.ToString();
+                if (this.ketNoi.SelectDuLieu($"SELECT * FROM LOP WHERE MaLop='{this.GenerateSlug(this.tbTenLop.Text + " " + namHoc)}'").Rows.Count == 0)
                 {
-                    string sql = $"INSERT INTO LOP (MaLop, TenLop, TenGVCN, NienKhoa) VALUES ('{this.GenerateSlug(this.tbTenLop.Text + " " + this.tbNienKhoa.Text)}', '{this.tbTenLop.Text}', '{this.tbTenGVCN.Text}', '{this.tbNienKhoa.Text}-01-01')";
+                    string sql = $"INSERT INTO LOP (MaLop, TenLop, TenGVCN, NienKhoa) VALUES ('{this.GenerateSlug(this.tbTenLop.Text + " " + namHoc)}', '{this.tbTenLop.Text}', '{this.tbTenGVCN.Text}', '{namHoc}-01-01')";
 
                     if (this.ketNoi.ExecuteNonQuery(sql))
                     {
                         this.tbTenLop.Text = "";
                         this.tbTenGVCN.Text = "";
-                        this.tbNienKhoa.Text = "";
                         this.tabLopHoc_HienThiLopHoc();
                     }
                     else
@@ -903,6 +903,7 @@ namespace PhanMemThiTracNghiem
                     break;
                 case 4:
                     tabKyThi_Click();
+                    tabMonThiCuaKyThi_Click();
                     break;
                 case 5:
                     tabCauHoi_Click();

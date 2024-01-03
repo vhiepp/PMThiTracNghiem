@@ -47,7 +47,25 @@ namespace PhanMemThiTracNghiem
             {
                 if (radioButton1.Checked)
                 {
-                    MessageBox.Show("OK");
+                    string sql = $"SELECT HOC_SINH.*, LOP.TenLop FROM HOC_SINH JOIN LOP ON HOC_SINH.MaLop = LOP.MaLop WHERE MaHS='{tenDangNhap}' AND MatKhau='{matKhau}';";
+                    DataTable dt = ketNoi.SelectDuLieu(sql);
+                    if (dt.Rows.Count > 0)
+                    {
+                        DataRow dataRow = dt.Rows[0];
+                        HocSinh hocSinh = new HocSinh();
+                        hocSinh.maHS = dataRow["MaHS"].ToString();
+                        hocSinh.hoTen = dataRow["TenHS"].ToString();
+                        hocSinh.gioiTinh = dataRow["GioiTinh"].ToString();
+                        hocSinh.lopHoc = dataRow["TenLop"].ToString();
+                        hocSinh.maLop = dataRow["MaLop"].ToString();
+                        MonThiCuaBan formMonThi = new MonThiCuaBan(hocSinh);
+                        formMonThi.Show();
+                        this.Hide();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Sai tên đăng nhập hoặc mật khẩu!");
+                    }
                 } else if (radioButton2.Checked)
                 {
                     string sql = $"SELECT * FROM ADMIN WHERE TenDangNhap='{tenDangNhap}' AND MatKhau='{matKhau}';";
